@@ -25,34 +25,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="开始"
+            android:text="Start"
             android:onClick="start"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="停止"
+            android:text="Stop"
             android:onClick="stop"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="暂停"
+            android:text="Pause"
             android:onClick="pause"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="播放"
+            android:text="Play"
             android:onClick="resume"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="切换"
+            android:text="Next"
             android:onClick="next"/>
     </LinearLayout>
 
@@ -61,6 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#0000ff"
+        android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:text="00:00/00:00"/>

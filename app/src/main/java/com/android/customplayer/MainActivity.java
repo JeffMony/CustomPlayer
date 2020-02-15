@@ -147,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
         int videoWidth = info.getWidth();
         int videoHeight = info.getHeight();
 
-        int viewHeight = mScreenWidth;
-        int viewWidth = (int)(viewHeight * videoWidth * 1.0f / videoHeight);
+        int viewWidth = mScreenWidth;
+        int viewHeight = (int)(viewWidth * videoHeight * 1.0f / videoWidth);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, viewHeight);
         params.gravity = Gravity.CENTER;
         LogUtils.d("viewWith="+viewWidth+", viewHeight="+viewHeight);
@@ -156,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-        mPlayer.setDataSource("/sdcard/tencent/MicroMsg/WeiXin/1579791536418.mp4");
+//        mPlayer.setDataSource("/sdcard/tencent/MicroMsg/WeiXin/1579791536418.mp4");
+        mPlayer.setDataSource("http://gv.vivo.com.cn/appstore/gamecenter/upload/video/201701/2017011314414026850.mp4");
         mPlayer.prepare();
     }
 
