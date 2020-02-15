@@ -38,6 +38,8 @@ set_target_properties(libswscale PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_D
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+include_directories(./include)
+
 add_library( # Sets the name of the library.
         customplayer
 
@@ -45,7 +47,13 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        custom_player.cpp)
+        CustomPlayer.cpp
+        CustomAudio.cpp
+        CustomVideo.cpp
+        CustomCallJava.cpp
+        CustomFFmpeg.cpp
+        CustomPlaystatus.cpp
+        CustomQueue.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -73,6 +81,7 @@ target_link_libraries( # Specifies the target library.
         libpostproc
         libswresample
         libswscale
+        OpenSLES
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})
