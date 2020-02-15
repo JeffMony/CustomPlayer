@@ -6,19 +6,28 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.customplayer.model.CustomTimeInfo;
+import com.android.customplayer.model.VideoSizeInfo;
 import com.android.customplayer.opengl.CustomGLSurfaceView;
 import com.android.customplayer.utils.LogUtils;
+import com.android.customplayer.utils.ScreenUtils;
 import com.android.customplayer.utils.TimeUtils;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int MSG_UPDATE_PROGRESS = 0x1;
+    private static final int MSG_VIDEO_SIZE_CHANGED = 0x2;
+
+    private int mScreenWidth = 0;
+    private int mScreenHeight = 0;
     private CustomPlayer mPlayer;
     private CustomGLSurfaceView mVideoView;
     private TextView mTimeView;
@@ -34,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         mVideoView = (CustomGLSurfaceView) findViewById(R.id.video_view);
         mProgressView = (SeekBar) findViewById(R.id.progress_view);
         mTimeView = (TextView) findViewById(R.id.time_view);
+        mScreenWidth = ScreenUtils.getScreenWidth(this);
+        mScreenHeight = ScreenUtils.getScreenHeight(this);
 
         initPlayer();
 
@@ -42,6 +53,17 @@ public class MainActivity extends AppCompatActivity {
     private void initPlayer() {
         mPlayer = new CustomPlayer();
         mPlayer.setGLSurfaceView(mVideoView);
+        mPlayer.setOnVideoSizeChangedListener(new CustomPlayer.OnVideoSizeChanged() {
+            @Override
+            public void onVideoSizeChanged(int width, int height) {
+                Message msg = Message.obtain();
+                VideoSizeInfo info = new VideoSizeInfo(width, height);
+                msg.obj = info;
+                msg.what = MSG_VIDEO_SIZE_CHANGED;
+                mHandler.sendMessage(msg);
+            }
+        });
+
         mPlayer.setOnPreparedListener(new CustomPlayer.OnPreparedListener() {
 
             @Override
@@ -81,9 +103,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTimeUpdate(CustomTimeInfo timeInfoBean) {
                 Message message = Message.obtain();
-                message.what = 1;
+                message.what = MSG_UPDATE_PROGRESS;
                 message.obj = timeInfoBean;
-                handler.sendMessage(message);
+                mHandler.sendMessage(message);
 
             }
         });
@@ -121,6 +143,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void updateVideoSurfaceView(VideoSizeInfo info) {
+        int videoWidth = info.getWidth();
+        int videoHeight = info.getHeight();
+
+        int viewHeight = mScreenWidth;
+        int viewWidth = (int)(viewHeight * videoWidth * 1.0f / videoHeight);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, viewHeight);
+        params.gravity = Gravity.CENTER;
+        LogUtils.d("viewWith="+viewWidth+", viewHeight="+viewHeight);
+        mVideoView.setLayoutParams(params);
+    }
+
     public void start(View view) {
         mPlayer.setDataSource("/sdcard/tencent/MicroMsg/WeiXin/1579791536418.mp4");
         mPlayer.prepare();
@@ -134,21 +168,21 @@ public class MainActivity extends AppCompatActivity {
         mPlayer.resume();
     }
 
-    Handler handler = new Handler(){
+    Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 1)
-            {
+            if(msg.what == MSG_UPDATE_PROGRESS) {
                 CustomTimeInfo timeInfo = (CustomTimeInfo) msg.obj;
                 mTimeView.setText(TimeUtils.secdsToDateFormat(timeInfo.getTotalTime(), timeInfo.getTotalTime())
                         + "/" + TimeUtils.secdsToDateFormat(timeInfo.getCurrentTime(), timeInfo.getTotalTime()));
 
 
-                if(!isSeeking && timeInfo.getTotalTime() > 0)
-                {
+                if(!isSeeking && timeInfo.getTotalTime() > 0) {
                     mProgressView.setProgress(timeInfo.getCurrentTime() * 100 / timeInfo.getTotalTime());
                 }
+            } else if (msg.what == MSG_VIDEO_SIZE_CHANGED) {
+                VideoSizeInfo info = (VideoSizeInfo) msg.obj;
+                updateVideoSurfaceView(info);
             }
         }
     };

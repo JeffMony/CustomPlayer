@@ -17,7 +17,7 @@ void *decodeFFmpeg(void *data)
     return 0;
 }
 
-void CustomFFmpeg::parpared() {
+void CustomFFmpeg::prepare() {
 
     pthread_create(&decodeThread, NULL, decodeFFmpeg, this);
 
@@ -43,6 +43,8 @@ void CustomFFmpeg::decodeFFmpegThread() {
 
     pFormatCtx->interrupt_callback.callback = avformat_callback;
     pFormatCtx->interrupt_callback.opaque = this;
+    int width = 0, height = 0;
+    int codec_num = 0, codec_den = 0;
 
     if(avformat_open_input(&pFormatCtx, url, NULL, NULL) != 0)
     {
@@ -88,6 +90,10 @@ void CustomFFmpeg::decodeFFmpegThread() {
                 video->streamIndex = i;
                 video->codecpar = pFormatCtx->streams[i]->codecpar;
                 video->time_base = pFormatCtx->streams[i]->time_base;
+                width = pFormatCtx->streams[i]->codecpar->width;
+                height = pFormatCtx->streams[i]->codecpar->height;
+                codec_num = pFormatCtx->streams[i]->codecpar->sample_aspect_ratio.num;
+                codec_den = pFormatCtx->streams[i]->codecpar->sample_aspect_ratio.den;
 
                 int num = pFormatCtx->streams[i]->avg_frame_rate.num;
                 int den = pFormatCtx->streams[i]->avg_frame_rate.den;
@@ -114,7 +120,9 @@ void CustomFFmpeg::decodeFFmpegThread() {
     {
         if(playstatus != NULL && !playstatus->exit)
         {
-            callJava->onCallParpared(CHILD_THREAD);
+            callJava->onCallVideoSizeChanged(CHILD_THREAD, width, height);
+            callJava->onCallPrepared(CHILD_THREAD);
+            LOGE("width=%d, height=%d, num=%d, den=%d", width, height, codec_num, codec_den);
         } else{
             exit = true;
         }
@@ -179,7 +187,7 @@ void CustomFFmpeg::start() {
     if(supportMediacodec)
     {
         video->codectype = CODEC_MEDIACODEC;
-        video->wlCallJava->onCallInitMediacodec(
+        video->wlCallJava->onCallInitMediaCodec(
                 codecName,
                 video->avCodecContext->width,
                 video->avCodecContext->height,

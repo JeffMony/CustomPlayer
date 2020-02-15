@@ -35,6 +35,7 @@ public class CustomPlayer {
 
     private String mUrl;
     private OnPreparedListener mOnPreparedListener;
+    private OnVideoSizeChanged mOnVideoSizeChangedListener;
     private OnLoadListener mOnLoadListener;
     private OnPauseResumeListener mOnPauseResumeListener;
     private OnTimeUpdateListener mOnTimeUpdateListener;
@@ -69,9 +70,12 @@ public class CustomPlayer {
         });
     }
 
-    public void setOnPreparedListener(OnPreparedListener listener)
-    {
+    public void setOnPreparedListener(OnPreparedListener listener) {
         this.mOnPreparedListener = listener;
+    }
+
+    public void setOnVideoSizeChangedListener(OnVideoSizeChanged listener) {
+        this.mOnVideoSizeChangedListener = listener;
     }
 
     public void setOnLoadListener(OnLoadListener listener) {
@@ -219,6 +223,10 @@ public class CustomPlayer {
         void onTimeUpdate(CustomTimeInfo info);
     }
 
+    public interface OnVideoSizeChanged {
+        void onVideoSizeChanged(int width, int height);
+    }
+
     //CalledByNative
     public void onCallPrepared() {
         if(mOnPreparedListener != null) {
@@ -337,6 +345,12 @@ public class CustomPlayer {
             }
 
         }
+    }
+
+    //CalledByNative
+    public void onCallVideoSizeChanged(int width, int height) {
+        LogUtils.d("onCallVideoSizeChanged="+width+", height="+height);
+        mOnVideoSizeChangedListener.onVideoSizeChanged(width, height);
     }
 
 }

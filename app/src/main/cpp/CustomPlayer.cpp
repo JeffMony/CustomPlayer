@@ -8,7 +8,6 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
-
 _JavaVM *javaVM = NULL;
 CustomCallJava *callJava = NULL;
 CustomFFmpeg *fFmpeg = NULL;
@@ -48,7 +47,7 @@ Java_com_android_customplayer_CustomPlayer__1prepare(
         callJava->onCallLoad(MAIN_THREAD, true);
         playstatus = new CustomPlaystatus();
         fFmpeg = new CustomFFmpeg(playstatus, callJava, m_url);
-        fFmpeg->parpared();
+        fFmpeg->prepare();
     }
 }
 

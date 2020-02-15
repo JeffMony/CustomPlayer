@@ -9,8 +9,7 @@ CustomCallJava::CustomCallJava(_JavaVM *javaVM, JNIEnv *env, jobject *obj) {
     this->jobj = env->NewGlobalRef(jobj);
 
     jclass  jlz = jniEnv->GetObjectClass(jobj);
-    if(!jlz)
-    {
+    if(!jlz) {
         if(LOG_DEBUG)
         {
             LOGE("get jclass wrong");
@@ -18,7 +17,8 @@ CustomCallJava::CustomCallJava(_JavaVM *javaVM, JNIEnv *env, jobject *obj) {
         return;
     }
 
-    jmid_parpared = env->GetMethodID(jlz, "onCallPrepared", "()V");
+    jmid_prepared = env->GetMethodID(jlz, "onCallPrepared", "()V");
+    jmid_videosizechanged = env->GetMethodID(jlz, "onCallVideoSizeChanged", "(II)V");
     jmid_load = env->GetMethodID(jlz, "onCallLoad", "(Z)V");
     jmid_timeinfo = env->GetMethodID(jlz, "onCallTimeInfo", "(II)V");
     jmid_error = env->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
@@ -29,14 +29,12 @@ CustomCallJava::CustomCallJava(_JavaVM *javaVM, JNIEnv *env, jobject *obj) {
     jmid_decodeavpacket = env->GetMethodID(jlz, "decodeAVPacket", "(I[B)V");
 }
 
-void CustomCallJava::onCallParpared(int type) {
+void CustomCallJava::onCallPrepared(int type) {
 
-    if(type == MAIN_THREAD)
-    {
-        jniEnv->CallVoidMethod(jobj, jmid_parpared);
+    if(type == MAIN_THREAD) {
+        jniEnv->CallVoidMethod(jobj, jmid_prepared);
     }
-    else if(type == CHILD_THREAD)
-    {
+    else if(type == CHILD_THREAD) {
         JNIEnv *jniEnv;
         if(javaVM->AttachCurrentThread(&jniEnv, 0) != JNI_OK)
         {
@@ -46,10 +44,29 @@ void CustomCallJava::onCallParpared(int type) {
             }
             return;
         }
-        jniEnv->CallVoidMethod(jobj, jmid_parpared);
+        jniEnv->CallVoidMethod(jobj, jmid_prepared);
         javaVM->DetachCurrentThread();
     }
 
+}
+
+void CustomCallJava::onCallVideoSizeChanged(int type, int width, int height) {
+    LOGE("onCallVideoSizeChanged width=%d, height=%d", width, height);
+    if (type == MAIN_THREAD) {
+        jniEnv->CallVoidMethod(jobj, jmid_videosizechanged, width, height);
+    } else if (type == CHILD_THREAD) {
+        JNIEnv *jniEnv;
+        if(javaVM->AttachCurrentThread(&jniEnv, 0) != JNI_OK)
+        {
+            if(LOG_DEBUG)
+            {
+                LOGE("get child thread jnienv worng");
+            }
+            return;
+        }
+        jniEnv->CallVoidMethod(jobj, jmid_videosizechanged, width, height);
+        javaVM->DetachCurrentThread();
+    }
 }
 
 void CustomCallJava::onCallLoad(int type, bool load) {
@@ -197,7 +214,7 @@ bool CustomCallJava::onCallIsSupportVideo(const char *ffcodecname) {
     return support;
 }
 
-void CustomCallJava::onCallInitMediacodec(const char* mime, int width, int height, int csd0_size, int csd1_size, uint8_t *csd_0, uint8_t *csd_1) {
+void CustomCallJava::onCallInitMediaCodec(const char* mime, int width, int height, int csd0_size, int csd1_size, uint8_t *csd_0, uint8_t *csd_1) {
 
     JNIEnv *jniEnv;
     if(javaVM->AttachCurrentThread(&jniEnv, 0) != JNI_OK)

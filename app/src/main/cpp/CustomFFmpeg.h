@@ -37,7 +37,7 @@ public:
     CustomFFmpeg(CustomPlaystatus *playstatus, CustomCallJava *callJava, const char *url);
     ~CustomFFmpeg();
 
-    void parpared();
+    void prepare();
     void decodeFFmpegThread();
     void start();
 
