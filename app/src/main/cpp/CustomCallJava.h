@@ -35,7 +35,7 @@ public:
 
     void onCallPrepared(int type);
 
-    void onCallVideoSizeChanged(int type, int width, int height);
+    void onCallVideoSizeChanged(int type, int width, int height, float dar);
 
     void onCallLoad(int type, bool load);
 

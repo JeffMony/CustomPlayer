@@ -224,7 +224,7 @@ public class CustomPlayer {
     }
 
     public interface OnVideoSizeChanged {
-        void onVideoSizeChanged(int width, int height);
+        void onVideoSizeChanged(int width, int height, float dar);
     }
 
     //CalledByNative
@@ -348,9 +348,9 @@ public class CustomPlayer {
     }
 
     //CalledByNative
-    public void onCallVideoSizeChanged(int width, int height) {
-        LogUtils.d("onCallVideoSizeChanged="+width+", height="+height);
-        mOnVideoSizeChangedListener.onVideoSizeChanged(width, height);
+    public void onCallVideoSizeChanged(int width, int height, float dar) {
+        LogUtils.d("onCallVideoSizeChanged="+width+", height="+height + ", dar="+dar);
+        mOnVideoSizeChangedListener.onVideoSizeChanged(width, height, dar);
     }
 
 }

@@ -120,9 +120,12 @@ void CustomFFmpeg::decodeFFmpegThread() {
     {
         if(playstatus != NULL && !playstatus->exit)
         {
-            callJava->onCallVideoSizeChanged(CHILD_THREAD, width, height);
+            int num, den;
+            av_reduce(&num, &den, width * (int64_t)codec_num, height * (int64_t)codec_den, 1024 * 1024);
+            float dar = num * 1.0f / den;
+            callJava->onCallVideoSizeChanged(CHILD_THREAD, width, height, dar);
             callJava->onCallPrepared(CHILD_THREAD);
-            LOGE("width=%d, height=%d, num=%d, den=%d", width, height, codec_num, codec_den);
+            LOGE("width=%d, height=%d, num=%d, den=%d", width, height, num, den);
         } else{
             exit = true;
         }

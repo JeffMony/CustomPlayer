@@ -19,8 +19,6 @@ import com.android.customplayer.utils.LogUtils;
 import com.android.customplayer.utils.ScreenUtils;
 import com.android.customplayer.utils.TimeUtils;
 
-import java.io.File;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int MSG_UPDATE_PROGRESS = 0x1;
@@ -55,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
         mPlayer.setGLSurfaceView(mVideoView);
         mPlayer.setOnVideoSizeChangedListener(new CustomPlayer.OnVideoSizeChanged() {
             @Override
-            public void onVideoSizeChanged(int width, int height) {
+            public void onVideoSizeChanged(int width, int height, float dar) {
                 Message msg = Message.obtain();
-                VideoSizeInfo info = new VideoSizeInfo(width, height);
+                VideoSizeInfo info = new VideoSizeInfo(width, height, dar);
                 msg.obj = info;
                 msg.what = MSG_VIDEO_SIZE_CHANGED;
                 mHandler.sendMessage(msg);
@@ -156,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-//        mPlayer.setDataSource("/sdcard/tencent/MicroMsg/WeiXin/1579791536418.mp4");
         mPlayer.setDataSource("http://gv.vivo.com.cn/appstore/gamecenter/upload/video/201701/2017011314414026850.mp4");
         mPlayer.prepare();
     }
@@ -194,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void next(View view) {
-        mPlayer.playNext(Environment.getExternalStorageDirectory().getAbsolutePath() + "/黄f鸿之南北y雄.1080p.mp4");
+        mPlayer.playNext("/sdcard/videotest/test2.mp4");
     }
 
 }

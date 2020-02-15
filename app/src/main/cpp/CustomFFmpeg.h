@@ -11,6 +11,7 @@
 extern "C"
 {
 #include "libavformat/avformat.h"
+#include "libavutil/rational.h"
 #include <libavutil/time.h>
 };
 

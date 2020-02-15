@@ -18,7 +18,7 @@ CustomCallJava::CustomCallJava(_JavaVM *javaVM, JNIEnv *env, jobject *obj) {
     }
 
     jmid_prepared = env->GetMethodID(jlz, "onCallPrepared", "()V");
-    jmid_videosizechanged = env->GetMethodID(jlz, "onCallVideoSizeChanged", "(II)V");
+    jmid_videosizechanged = env->GetMethodID(jlz, "onCallVideoSizeChanged", "(IIF)V");
     jmid_load = env->GetMethodID(jlz, "onCallLoad", "(Z)V");
     jmid_timeinfo = env->GetMethodID(jlz, "onCallTimeInfo", "(II)V");
     jmid_error = env->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
@@ -40,7 +40,7 @@ void CustomCallJava::onCallPrepared(int type) {
         {
             if(LOG_DEBUG)
             {
-                LOGE("get child thread jnienv worng");
+                LOGE("Get child thread JNIEnv wrong.");
             }
             return;
         }
@@ -50,8 +50,8 @@ void CustomCallJava::onCallPrepared(int type) {
 
 }
 
-void CustomCallJava::onCallVideoSizeChanged(int type, int width, int height) {
-    LOGE("onCallVideoSizeChanged width=%d, height=%d", width, height);
+void CustomCallJava::onCallVideoSizeChanged(int type, int width, int height, float dar) {
+    LOGE("onCallVideoSizeChanged width=%d, height=%d, dar=%.2f", width, height, dar);
     if (type == MAIN_THREAD) {
         jniEnv->CallVoidMethod(jobj, jmid_videosizechanged, width, height);
     } else if (type == CHILD_THREAD) {
@@ -60,11 +60,11 @@ void CustomCallJava::onCallVideoSizeChanged(int type, int width, int height) {
         {
             if(LOG_DEBUG)
             {
-                LOGE("get child thread jnienv worng");
+                LOGE("Get child thread JNIEnv wrong.");
             }
             return;
         }
-        jniEnv->CallVoidMethod(jobj, jmid_videosizechanged, width, height);
+        jniEnv->CallVoidMethod(jobj, jmid_videosizechanged, width, height, dar);
         javaVM->DetachCurrentThread();
     }
 }
