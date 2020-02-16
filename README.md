@@ -9,8 +9,9 @@
 首先要将脚本放在ffmpeg目录下，ffmpeg 切换到n4.0.3版本；<br>
 ./build_android_ffmpeg.sh all
 > * 编译openssl 库；<br>
-在third_libray中下载了openssl 库，也写了编译openssl库的方法和脚本；
-#### 2.解析输入的视频ur
+如何在ffmpeg中支持openssl，<br>
+可以参考[ffmpeg 开源项目分析(一)ffmpeg/openssl/x264编译](https://www.jianshu.com/p/f292a6575d58)
+#### 2.解析输入的视频url
 #### 3.分离视频流、音频流
 #### 4.解码视频流，OpenGL ES和GLSurfaceView渲染
 > * 获取视频的DAR；DAR就是视频的宽高比;<br>
