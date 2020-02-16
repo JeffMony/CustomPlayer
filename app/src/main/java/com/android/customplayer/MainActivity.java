@@ -190,8 +190,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void next(View view) {
-        mPlayer.playNext("/sdcard/videotest/test2.mp4");
-    }
+//    public void next(View view) {
+//        mPlayer.playNext("/sdcard/videotest/test2.mp4");
+//    }
 
+    public void next(View view) {
+        mPlayer.playNext("https://tv.youkutv.cc/2019/10/28/6MSVuLec4zbpYFlj/playlist.m3u8");
+    }
 }
