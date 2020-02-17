@@ -18,3 +18,10 @@
 [视频的宽高应该怎么看？](https://www.jianshu.com/p/9eda5e7f3fed)
 #### 5.解码音频流，OpenSL ES播放
 #### 6.音频、视频 同步
+
+### 版本LOG
+v1.0.0
+> * 裁剪ffmpeg库；
+> * 编译ffmpeg openssl库；
+> * ffmpeg opengles opensles实现简单的视频播放器
+
