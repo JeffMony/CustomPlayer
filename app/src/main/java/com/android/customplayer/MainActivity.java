@@ -144,9 +144,14 @@ public class MainActivity extends AppCompatActivity {
     private void updateVideoSurfaceView(VideoSizeInfo info) {
         int videoWidth = info.getWidth();
         int videoHeight = info.getHeight();
-
+        float dar = info.getDar();
         int viewWidth = mScreenWidth;
-        int viewHeight = (int)(viewWidth * videoHeight * 1.0f / videoWidth);
+        int viewHeight = 0;
+        if (Float.compare(dar, Float.NaN) == 0 || Float.compare(dar, 0.0f) == 0) {
+            viewHeight = (int) (viewWidth * 1.0f / videoWidth);
+        } else {
+            viewHeight = (int)(viewWidth * 1.0f / dar);
+        }
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, viewHeight);
         params.gravity = Gravity.CENTER;
         LogUtils.d("viewWith="+viewWidth+", viewHeight="+viewHeight);
@@ -154,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-        mPlayer.setDataSource("http://gv.vivo.com.cn/appstore/gamecenter/upload/video/201701/2017011314414026850.mp4");
+//        mPlayer.setDataSource("http://gv.vivo.com.cn/appstore/gamecenter/upload/video/201701/2017011314414026850.mp4");
+        mPlayer.setDataSource("https://hls.aoxtv.com/v3.szjal.cn/20200114/dtOHlPFE/index.m3u8");
         mPlayer.prepare();
     }
 
